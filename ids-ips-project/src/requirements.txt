@@ -1,2 +1,13 @@
-scapy==2.5.0
-pyshark==0.6.0
+# PacketSentry IDS/IPS Projesi için Gerekli Kütüphaneler
+
+# Temel paket yakalama ve ağ analizi için
+scapy>=2.4.5
+
+# Sistem bilgileri ve arayüz durumu kontrolü için
+psutil>=5.9.0
+
+# HTTP bağlantı testi için
+requests>=2.28.1
+
+# Diğer bağımlılıklar (standart kütüphaneler hariç tutulmuştur)
+# threading, queue, json, subprocess gibi standart kütüphaneler için bağımlılık belirtilmemiştir.
