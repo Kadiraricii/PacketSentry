@@ -284,7 +284,7 @@ def select_interface():
                         ans, unans = sr(IP(dst=target)/ICMP(), timeout=2, verbose=False)
                         if ans:
                             is_connected = True
-                            break
+                            # Removed break statement
                     except Exception as e:
                         logger.warning(f'Dış ağ testi hatası ({selected_iface}, Hedef: {target}): {str(e)}')
                         continue
@@ -410,6 +410,9 @@ def packet_callback(packet):
                                 if re.search(regex, decoded_payload):
                                     threat_score += 1
                                     matched_patterns.append(regex)
+                                    break # Desen bulunduğunda döngüden çık
+
+                            # Döngü bittikten sonra tehdit puanını kontrol et
                             if threat_score > 0:
                                 alert_msg = f'!!! ŞÜPHELİ SQL INJECTION TESPİT EDİLDİ !!! Kaynak IP: {src_ip}, Hedef IP: {dst_ip}, Port: {sport}->{dport}, Tehdit Puanı: {threat_score}, Eşleşen Kalıplar: {", ".join(matched_patterns)}, Payload Özeti: {decoded_payload[:100]}...'
                                 logger.warning(alert_msg)
@@ -422,9 +425,9 @@ def packet_callback(packet):
                                 except:
                                     print(f'[!!] UYARI: {alert_msg}')
                                 if threat_score >= 2:  # Eşik: En az 2 desen eşleşirse daha ciddi bir uyarı
-                                    logger.critical(f'YÜKSEK TEHDİT SEVİYESİ: SQL Injection tespit edildi. Tehdit Puanı: {threat_score}')
+                                    logger.critical(f'YÜKSET TEHDİT SEVİYESİ: SQL Injection tespit edildi. Tehdit Puanı: {threat_score}')
                                     print(f'\033[91m[!!] KRİTİK UYARI: Yüksek tehdit seviyesi tespit edildi. Tehdit Puanı: {threat_score}\033[0m')
-                            break
+                            ## break # Bu break dışarıdaki if bloğunun sonundaydı, kaldırıldı.
                     except Exception as e:
                         logger.warning(f'Payload çözümleme hatası: {str(e)}')
                         # Bayt bazlı basit kontrol (yedek)
