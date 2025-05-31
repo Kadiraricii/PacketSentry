@@ -44,6 +44,7 @@ Script, başlangıç sürümünden bu yana önemli ölçüde geliştirilmiştir.
 - **Hata Yönetimi ve Raporlama:**
   - Maksimum deneme sayısı aşıldığında bir `error_report.txt` dosyası oluşturulur. Bu dosya sistem bilgilerini, arayüz listesini ve hata mesajlarını içerir.
   - Kullanıcıya ağ ayarlarını kontrol etme ve sistem yöneticisine danışma gibi rehberlik sağlanır.
+  - **Log Dosyası Detayları:** Hata raporlarına log dosyasından son 10 satır eklenerek daha fazla bağlam sağlanır, bu da sorun gidermeyi kolaylaştırır.
 
 - **Performans Optimizasyonu:**
   - Paralel ping testi ile dış ağ kontrolü hızlandırıldı.
@@ -54,6 +55,30 @@ Script, başlangıç sürümünden bu yana önemli ölçüde geliştirilmiştir.
 
 - **Terminal Çıktısı Esnekliği:**
   - Renkli uyarı mesajları (`os.isatty(1)` kontrolü ile) terminal dışı ortamlarda standart metne dönüştürülür (`[!!] UYARI: ...`).
+  - **Zaman Damgalı ve Renkli Çıktılar:** Terminal çıktılarında zaman damgası eklendi ve farklı seviyeler için renk kodları (örneğin, kırmızı: kritik, turuncu: uyarı) kullanıldı, bu da kullanıcı deneyimini iyileştirir.
+
+- **Genişletilmiş Komut Satırı Seçenekleri:**
+  - `analyze_traffic.py` scriptine yeni argümanlar eklendi:
+    - `--pcap`: Bir `.pcap` dosyasını analiz etme seçeneği, canlı trafik yerine dosya tabanlı analiz sağlar.
+    - `--filter`: Kullanıcılar özel BPF filtreleri belirtebilir, varsayılan filtre (`tcp port 80 or tcp port 443 or udp`) yerine özelleştirilmiş analiz yapılabilir.
+
+- **Tehdit Tespiti ve Engelleme Modülleri:**
+  - **detect_and_block.py İyileştirmeleri:**
+    - **Zaman Damgası ve Renkli Çıktılar:** Loglama fonksiyonu (`log_and_alert`), terminalde zaman damgası ve renkli çıktılar sunacak şekilde güncellendi.
+    - **JSON Loglama Detayları:** Engelleme olaylarına daha fazla detay (örneğin, kaynak IP, hedef IP, portlar) eklendi.
+    - **macOS ve Windows için Spesifik Kurallar:** `pfctl` (macOS) ve `netsh` (Windows) için tehdit türüne göre özel kurallar (örneğin, sadece 80 portunu engelleme) uygulanabilir hale getirildi.
+    - **Performans İyileştirmesi:** Engellenen IP'lerin dosyaya yazımı (`save_blocked_ips()`) periyodik olarak yapılır, böylece sık dosya yazma işlemleri önlenir.
+  - **detect_attacks.py İyileştirmeleri:**
+    - **Zaman Damgalı ve Renkli Çıktılar:** Terminal çıktılarında zaman damgası ve seviye bazlı renk kodları eklendi.
+    - **Beyaz Liste ve Regex Optimizasyonu:** Yanlış pozitifleri azaltmak için beyaz liste (`WHITELIST`) zaten mevcuttu; regex desenleri `re.compile()` ile derlenerek performans artırıldı.
+
+- **Performans Testi Modülü:**
+  - **Yeni Dosya: `performance_test.py`:** Sistem performansını ölçmek için yeni bir test script'i oluşturuldu. Bu script, canlı trafik veya `.pcap` dosyaları üzerinden test yaparak şu metrikleri toplar:
+    - Toplam işlenen paket sayısı, paket işleme hızı (paket/saniye).
+    - CPU kullanımı (ortalama ve maksimum, %).
+    - Bellek kullanımı (ortalama ve maksimum, MB).
+  - **Komut Satırı Seçenekleri:** `--pcap` (dosya analizi), `--interface` (canlı trafik) ve `--duration` (test süresi) argümanlarıyla özelleştirilebilir.
+  - **Raporlama:** Sonuçlar terminalde görüntülenir ve `test_results.md` dosyasına Markdown formatında kaydedilir, böylece test tarihçesi tutulur.
 
 ## Bağımlılıklar
 - **Python Paketleri:**

@@ -25,6 +25,34 @@ except ImportError:
     REQUESTS_AVAILABLE = False
     logger.warning('requests kütüphanesi bulunamadı. HTTP bağlantı testi yapılamayacak.')
     print('Uyarı: requests kütüphanesi bulunamadı. HTTP bağlantı testi yapılamayacak.')
+from detect_attacks import detect_attacks
+import time
+
+# Yardımcı fonksiyon: Uyarı mesajı oluşturma ve yazdırma
+def log_and_alert(msg, level='warning', critical=False):
+    """Uyarı mesajını loglar ve terminale yazdırır."""
+    timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+    if level == 'critical':
+        logger.critical(msg)
+    elif level == 'warning':
+        logger.warning(msg)
+    else:
+        logger.info(msg)
+    try:
+        if os.isatty(1):  # Terminalde mi çalışıyoruz?
+            if level == 'critical':
+                color = '\033[91m'  # Kırmızı
+            elif level == 'warning':
+                color = '\033[93m'  # Turuncu
+            elif level == 'success':
+                color = '\033[92m'  # Yeşil
+            else:
+                color = '\033[94m'  # Mavi
+            print(f'{color}{timestamp} [!!] {level.upper()}: {msg}\033[0m')
+        else:
+            print(f'{timestamp} [!!] {level.upper()}: {msg}')
+    except:
+        print(f'{timestamp} [!!] {level.upper()}: {msg}')
 
 # Loglama ayarları
 LOG_FILE = '../data/ids.log'
@@ -43,7 +71,7 @@ logger = logging.getLogger(__name__)
 def setup_logging():
     """Loglama sistemini başlatır ve başlangıç mesajı yazar."""
     logger.info('IDS/IPS sistemi başlatılıyor...')
-    print('Loglama başlatıldı. Detaylar için ids.log dosyasına bakabilirsiniz.')
+    log_and_alert('Loglama başlatıldı. Detaylar için ids.log dosyasına bakabilirsiniz.', level='info')
 
 def get_all_interfaces():
     """Sistemdeki tüm ağ arayüzlerini döndürür."""
@@ -53,7 +81,7 @@ def get_all_interfaces():
         return interfaces
     except Exception as e:
         logger.error(f'Arayüz listesi alınamadı: {str(e)}')
-        print(f'Hata: Arayüz listesi alınamadı. Detaylar için log dosyasına bakın.')
+        log_and_alert(f'Hata: Arayüz listesi alınamadı. Detaylar için log dosyasına bakın.', level='warning')
         return []
 
 def is_interface_up(iface):
@@ -88,7 +116,7 @@ def get_active_interfaces():
     interfaces = get_all_interfaces()
     active_interfaces = []
     logger.info('Aktif ağ arayüzleri taranıyor...')
-    print('Aktif ağ arayüzleri taranıyor...')
+    log_and_alert('Aktif ağ arayüzleri taranıyor...', level='info')
     
     for iface in interfaces:
         # Loopback arayüzlerini hariç tut
@@ -119,8 +147,10 @@ def get_active_interfaces():
 def select_interface():
     """Arayüz seçimini yapar: Komut satırı argümanı, otomatik seçim veya manuel seçim."""
     # Adım 1: Komut satırı argümanını kontrol et
-    parser = argparse.ArgumentParser(description='IDS/IPS Sistemi - Arayüz Seçimi')
+    parser = argparse.ArgumentParser(description='IDS/IPS Sistemi - Arayüz Seçimi ve Paket Analizi')
     parser.add_argument('-i', '--interface', type=str, help='Kullanılacak ağ arayüzü adı')
+    parser.add_argument('--pcap', type=str, help='Analiz edilecek .pcap dosyası yolu')
+    parser.add_argument('--filter', type=str, help='Özel BPF filtresi')
     args = parser.parse_args()
     
     if args.interface:
@@ -348,6 +378,15 @@ def select_interface():
             for iface, ip in interfaces_to_show:
                 f.write(f'- {iface} (IP: {ip})\n')
             f.write('Hata Mesajı: Maksimum deneme sayısına ulaşıldı. Arayüz seçilemedi.\n')
+            # Log dosyasından son birkaç satırı ekle
+            f.write('Son Log Kayıtları:\n')
+            try:
+                with open(LOG_FILE, 'r') as log_f:
+                    last_lines = log_f.readlines()[-10:]  # Son 10 satır
+                    for line in last_lines:
+                        f.write(f'  {line.strip()}\n')
+            except Exception as log_e:
+                f.write(f'Log dosyası okunamadı: {str(log_e)}\n')
         logger.info(f'Hata raporu oluşturuldu: {error_report_file}')
         print(f'Hata raporu oluşturuldu: {error_report_file}. Lütfen bu dosyayı geliştiriciye gönderin.')
     except Exception as e:
@@ -377,81 +416,28 @@ def packet_callback(packet):
                     log_msg = f'Payload: {payload[:50]}...'
                     logger.info(log_msg)
                     print(log_msg)
-                    # SQL Injection tespiti için genişletilmiş desen kontrolü
-                    try:
-                        # Payload'u string'e çevirip URL kod çözme yap (çoklu kodlama denemeleri)
-                        payload_str = None
-                        try:
-                            payload_str = payload.decode('utf-8')
-                        except UnicodeDecodeError:
-                            try:
-                                payload_str = payload.decode('latin-1')
-                            except UnicodeDecodeError:
-                                payload_str = payload.decode('utf-8', errors='ignore')
-                        if payload_str:
-                            decoded_payload = urllib.parse.unquote(payload_str)
-                            # Genişletilmiş SQL Injection desenleri (regex ile)
-                            sql_injection_regexes = [
-                                r'(?i)UNION\s*SELECT',  # Case-insensitive UNION SELECT
-                                r'(?i)UNION\s*/\*.*\*/\s*SELECT',  # UNION/**/SELECT gibi yorumlu desenler
-                                r'(?i)OR\s*1\s*=\s*1',  # OR 1=1
-                                r'(?i)AND\s*1\s*=\s*1',  # AND 1=1
-                                r'--',  # SQL yorum satırı
-                                r';\s*DROP\s*TABLE',  # DROP TABLE gibi tehlikeli komutlar
-                                r'(?i)EXEC\s+xp_',  # EXEC xp_ ile başlayan stored procedures
-                                r'(?i)EXEC\s+sp_',  # EXEC sp_ ile başlayan stored procedures
-                                r'%27',  # Kodlanmış tek tırnak (')
-                                r'%22',  # Kodlanmış çift tırnak (")
-                                r'%3B'   # Kodlanmış noktalı virgül (;)
-                            ]
-                            threat_score = 0
-                            matched_patterns = []
-                            for regex in sql_injection_regexes:
-                                if re.search(regex, decoded_payload):
-                                    threat_score += 1
-                                    matched_patterns.append(regex)
-                                    break # Desen bulunduğunda döngüden çık
-
-                            # Döngü bittikten sonra tehdit puanını kontrol et
-                            if threat_score > 0:
-                                alert_msg = f'!!! ŞÜPHELİ SQL INJECTION TESPİT EDİLDİ !!! Kaynak IP: {src_ip}, Hedef IP: {dst_ip}, Port: {sport}->{dport}, Tehdit Puanı: {threat_score}, Eşleşen Kalıplar: {", ".join(matched_patterns)}, Payload Özeti: {decoded_payload[:100]}...'
-                                logger.warning(alert_msg)
-                                # Terminalde renkli çıktı (sadece terminal ortamında)
-                                try:
-                                    if os.isatty(1):  # Terminalde mi çalışıyoruz?
-                                        print(f'\033[91m[!!] UYARI: {alert_msg}\033[0m')  # Kırmızı renkte uyarı
-                                    else:
-                                        print(f'[!!] UYARI: {alert_msg}')
-                                except:
-                                    print(f'[!!] UYARI: {alert_msg}')
-                                if threat_score >= 2:  # Eşik: En az 2 desen eşleşirse daha ciddi bir uyarı
-                                    logger.critical(f'YÜKSET TEHDİT SEVİYESİ: SQL Injection tespit edildi. Tehdit Puanı: {threat_score}')
-                                    print(f'\033[91m[!!] KRİTİK UYARI: Yüksek tehdit seviyesi tespit edildi. Tehdit Puanı: {threat_score}\033[0m')
-                            ## break # Bu break dışarıdaki if bloğunun sonundaydı, kaldırıldı.
-                    except Exception as e:
-                        logger.warning(f'Payload çözümleme hatası: {str(e)}')
-                        # Bayt bazlı basit kontrol (yedek)
-                        sql_injection_patterns = [
-                            b'UNION SELECT',
-                            b'1=1',
-                            b'OR 1=1',
-                            b'--',
-                            b'; DROP TABLE',
-                            b'EXEC xp_',
-                            b'EXEC sp_'
-                        ]
-                        for pattern in sql_injection_patterns:
-                            if pattern in payload:
-                                alert_msg = f'!!! ŞÜPHELİ SQL INJECTION TESPİT EDİLDİ (Bayt Kontrolü) !!! Kaynak IP: {src_ip}, Hedef IP: {dst_ip}, Port: {sport}->{dport}, Kalıp: {pattern.decode("utf-8", errors="ignore")}'
-                                logger.warning(alert_msg)
-                                try:
-                                    if os.isatty(1):
-                                        print(f'\033[91m[!!] UYARI: {alert_msg}\033[0m')
-                                    else:
-                                        print(f'[!!] UYARI: {alert_msg}')
-                                except:
-                                    print(f'[!!] UYARI: {alert_msg}')
-                                break
+                    # Tehdit tespiti yap
+                    threat_types = detect_attacks(packet, src_ip, dst_ip, sport, dport)
+                    if threat_types:
+                        # Tehdit tespit edilirse IP'yi engelle
+                        from detect_and_block import block_threat
+                        for threat_type in threat_types:
+                            block_threat(packet, src_ip, dst_ip, sport, dport, threat_type)
+                    # Paket detaylarını traffic.log dosyasına kaydet
+                    import json
+                    import time
+                    traffic_log = {
+                        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "src_ip": src_ip,
+                        "dst_ip": dst_ip,
+                        "sport": sport,
+                        "dport": dport,
+                        "payload": str(payload[:100]) if packet.haslayer("Raw") else "",
+                        "protocol": "TCP" if packet.haslayer("TCP") else ("UDP" if packet.haslayer("UDP") else "Other")
+                    }
+                    with open("../data/traffic.log", "a") as f:
+                        json.dump(traffic_log, f, indent=2)
+                        f.write("\n")
         elif packet.haslayer(UDP):
             sport = packet[UDP].sport
             dport = packet[UDP].dport
@@ -477,9 +463,33 @@ def check_permissions(iface):
         print(f'Hata: İzin kontrolü sırasında bir sorun oluştu. Detaylar için log dosyasına bakın.')
         return False
 
+def analyze_pcap_file(pcap_file):
+    """Belirtilen .pcap dosyasını analiz eder."""
+    try:
+        logger.info(f'.pcap dosyası analiz ediliyor: {pcap_file}')
+        print(f'.pcap dosyası analiz ediliyor: {pcap_file}')
+        packets = rdpcap(pcap_file)
+        for packet in packets:
+            packet_callback(packet)
+        logger.info(f'.pcap dosyası analizi tamamlandı: {pcap_file}')
+        print(f'.pcap dosyası analizi tamamlandı: {pcap_file}')
+    except Exception as e:
+        logger.error(f'.pcap dosyası analizi hatası: {str(e)}')
+        print(f'Hata: .pcap dosyası analizi sırasında bir sorun oluştu: {str(e)}')
+
 def main():
     """Ana fonksiyon: Loglama, izin kontrolü, arayüz seçimi yapar, ardından paket dinlemeyi başlatır."""
     setup_logging()
+    parser = argparse.ArgumentParser(description='IDS/IPS Sistemi - Arayüz Seçimi ve Paket Analizi')
+    parser.add_argument('-i', '--interface', type=str, help='Kullanılacak ağ arayüzü adı')
+    parser.add_argument('--pcap', type=str, help='Analiz edilecek .pcap dosyası yolu')
+    parser.add_argument('--filter', type=str, help='Özel BPF filtresi')
+    args = parser.parse_args()
+    
+    if args.pcap:
+        analyze_pcap_file(args.pcap)
+        return
+    
     iface = select_interface()
     
     if iface is None:
@@ -497,7 +507,15 @@ def main():
         logger.info(f'Paket dinleme başlatılıyor. Arayüz: {iface}')
         print(f'Paket dinleme başlatılıyor. Arayüz: {iface}')
         # HTTP, HTTPS ve UDP için genişletilmiş filtre
-        sniff(iface=iface, prn=packet_callback, filter='tcp port 80 or tcp port 443 or udp', store=0)
+        # Asenkron işleme için threading kullanılıyor
+        from threading import Thread
+        def sniff_packets():
+            bpf_filter = args.filter if args.filter else 'tcp port 80 or tcp port 443 or udp'
+            sniff(iface=iface, prn=packet_callback, filter=bpf_filter, store=0)
+        sniff_thread = Thread(target=sniff_packets)
+        sniff_thread.daemon = True
+        sniff_thread.start()
+        sniff_thread.join()
     except Exception as e:
         logger.error(f'Paket dinleme hatası: {str(e)}')
         print(f'Hata: Paket dinleme sırasında bir sorun oluştu. Detaylar için log dosyasına bakın.')
