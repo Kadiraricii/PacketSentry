@@ -138,14 +138,13 @@ Licensed under the [MIT License](LICENSE.md).
 
 ---
 
-## Acknowledgements / *Teşekkürler* (Optional)
+<!--## Acknowledgements / *Teşekkürler* (Optional)
 
 Thanks to:  
-- Istinye University for fostering an innovative academic environment.  
-- Scapy and Psutil libraries for their robust and reliable support.  
-- The open-source community for inspiration and collaboration.  
+- 
+-  
 
-*Teşekkürler: İstinyer Üniversitesi’ne yenilikçi akademik ortamı için, Scapy ve Psutil kütüphanelerine güçlü ve güvenilir destekleri için, açık kaynak topluluğuna ilham ve iş birliği için.*
+*Teşekkürler: İstinye Üniversitesi’ne yenilikçi akademik ortamı için, Scapy ve Psutil kütüphanelerine güçlü ve güvenilir destekleri için, açık kaynak topluluğuna ilham ve iş birliği için.*
 
 ---
 
@@ -155,3 +154,4 @@ Project Maintainer: Kadir Arıcı - [kadir.arici@istinye.edu.tr](mailto:kadir.ar
 Found a bug? Open an issue.  
 
 *Proje Sorumlusu: Kadir Arıcı - [kadir.arici@istinye.edu.tr](mailto:kadir.arici@istinye.edu.tr). Hata bulursanız bir sorun bildirin.*
+### -->
