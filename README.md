@@ -114,7 +114,7 @@ sudo python src/main.py --mode analyze
 3. Review output in `data/ids.log` for detailed logs and `tests/test_results.md` for performance metrics.  
    *Detaylı logları `data/ids.log`’da, performans metriklerini `tests/test_results.md`’de inceleyin.*
 
----
+<!---
 
 ## Contributing / *Katkıda Bulunma*
 
@@ -128,7 +128,7 @@ We welcome contributions! To help:
 
 Follow our coding standards (see [CONTRIBUTING.md](CONTRIBUTING.md)).  
 *Topluluk katkilerini memnuniyetle karşılıyoruz! Katkıda bulunmak için yukarıdaki adımları izleyin ve kodlama standartlarımıza uyun.*
-
+-->
 ---
 
 ## License / *Lisans*
