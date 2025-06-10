@@ -133,7 +133,7 @@ Follow our coding standards (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## License / *Lisans*
 
-Licensed under the [MIT License](LICENSE.md).  
+Licensed under the [MIT License](LICENSE).  
 *MIT Lisansı altında lisanslanmıştır.*
 
 ---
