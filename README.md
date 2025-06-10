@@ -60,8 +60,8 @@ A state-of-the-art, real-time intrusion detection and prevention system (IDS/IPS
 
 ## Roadmap / *Yol Haritası*
 
-See our detailed plans in [ROADMAP.md](ROADMAP.md).  
-*Detaylı planları görmek için [ROADMAP.md](ROADMAP.md) dosyasına göz atın.*
+See our detailed plans in [ROADMAP.md](ids-ips-project/ROADMAP.md).  
+*Detaylı planları görmek için [ROADMAP.md](ids-ips-project/ROADMAP.md) dosyasına göz atın.*
 
 ---
 
