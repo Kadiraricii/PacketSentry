@@ -23,8 +23,8 @@ try:
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
-    logger.warning('requests kütüphanesi bulunamadı. HTTP bağlantı testi yapılamayacak.')
     print('Uyarı: requests kütüphanesi bulunamadı. HTTP bağlantı testi yapılamayacak.')
+
 from detect_attacks import detect_attacks
 import time
 

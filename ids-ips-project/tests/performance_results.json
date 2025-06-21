@@ -1,0 +1,22 @@
+[
+  {
+    "timestamp": "2025-06-21 02:40:42",
+    "total_packets": 114,
+    "total_time": 30.004698991775513,
+    "packets_per_second": 3.7994048875893793,
+    "avg_cpu": 0.3,
+    "max_cpu": 3.3,
+    "avg_memory": 83.12395833333333,
+    "max_memory": 83.875
+  },
+  {
+    "timestamp": "2025-06-21 02:41:48",
+    "total_packets": 6,
+    "total_time": 30.00583791732788,
+    "packets_per_second": 0.19996108812329144,
+    "avg_cpu": 0.0,
+    "max_cpu": 0.0,
+    "avg_memory": 81.646875,
+    "max_memory": 81.921875
+  }
+]
