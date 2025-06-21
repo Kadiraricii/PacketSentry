@@ -518,7 +518,7 @@ def main():
         sniff_thread.join()
     except Exception as e:
         logger.error(f'Paket dinleme hatası: {str(e)}')
-        print(f'Hata: Paket dinleme sırasında bir sorun oluştu. Detaylar için log dosyasına bakın.')
+        print(f'Hata: Paket dinleme sırasında bir sorun oluştu. Detaylar için log dosyasına bakın!')
 
 if __name__ == '__main__':
     main()
