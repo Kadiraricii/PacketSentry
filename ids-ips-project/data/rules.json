@@ -1,0 +1,98 @@
+{
+  "sql_injection": {
+    "patterns": [
+      "(?i)UNION\\s*SELECT",
+      "(?i)UNION\\s*/\\*.*\\*/\\s*SELECT",
+      "(?i)OR\\s*1\\s*=\\s*1",
+      "(?i)AND\\s*1\\s*=\\s*1",
+      "--",
+      ";\\s*DROP\\s*TABLE",
+      "(?i)EXEC\\s+xp_",
+      "(?i)EXEC\\s+sp_",
+      "%27",
+      "%22",
+      "%3B",
+      "%2D%2D",
+      "(?i)INSERT\\s+INTO",
+      "(?i)UPDATE\\s+.*SET",
+      "(?i)DELETE\\s+FROM"
+    ],
+    "threat_score": 2,
+    "enabled": true
+  },
+  "command_injection": {
+    "patterns": [
+      ";\\s*(ls|dir|cat|whoami|id|pwd|uname|netstat|ps|top)",
+      "&&\\s*(ls|dir|cat|whoami|id|pwd|uname)",
+      "\\|\\s*(ls|dir|cat|whoami|id|pwd)",
+      "(?i)exec\\s*\\(",
+      "(?i)system\\s*\\(",
+      "(?i)eval\\s*\\(",
+      "%3B",
+      "%26%26",
+      "%7C",
+      ";\\s*rm\\s*-rf",
+      ";\\s*chmod",
+      ";\\s*chown"
+    ],
+    "threat_score": 2,
+    "enabled": true
+  },
+  "directory_traversal": {
+    "patterns": [
+      "\\.\\.\\/",
+      "\\.\\\\.\\\\",
+      "%2e%2e%2f",
+      "%2e%2e%5c",
+      "etc/passwd",
+      "boot\\.ini",
+      "win\\.ini",
+      "system32",
+      "/proc/self/environ",
+      "/etc/shadow"
+    ],
+    "threat_score": 2,
+    "enabled": true
+  },
+  "xss": {
+    "patterns": [
+      "(?i)<script\\s*.*?>",
+      "(?i)javascript:",
+      "(?i)on(error|load|click|mouseover|mouseout|submit|focus|blur|change|input|keydown|keypress|keyup)\\s*=",
+      "(?i)alert\\s*\\(",
+      "(?i)eval\\s*\\(",
+      "%3Cscript%3E",
+      "%6A%61%76%61%73%63%72%69%70%74",
+      "(?i)document\\.cookie",
+      "(?i)window\\.location",
+      "(?i)<img\\s+src\\s*=\\s*[\\'\"]javascript:"
+    ],
+    "threat_score": 1,
+    "enabled": true
+  },
+  "csrf": {
+    "patterns": [
+      "(?i)^(POST|PUT|PATCH|DELETE)\\s",
+      "(?i)Content-Type:\\s*application/x-www-form-urlencoded",
+      "(?i)Content-Type:\\s*multipart/form-data"
+    ],
+    "threat_score": 2,
+    "enabled": true,
+    "suspicious_domains": [
+      "evil.com",
+      "malicious.com",
+      "phishing.org",
+      "attacker.net"
+    ],
+    "required_headers": [
+      "Referer",
+      "Origin"
+    ],
+    "csrf_token_patterns": [
+      "(?i)csrf[_-]?token",
+      "(?i)xsrf[_-]?token",
+      "(?i)authenticity[_-]?token",
+      "(?i)__RequestVerificationToken"
+    ]
+  }
+}

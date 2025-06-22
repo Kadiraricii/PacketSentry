@@ -1,0 +1,37 @@
+{
+  "logging": {
+    "log_file": "../data/ids.log",
+    "level": "INFO",
+    "max_file_size": 10485760,
+    "backup_count": 5
+  },
+  "detection": {
+    "request_threshold": 50,
+    "time_window": 60,
+    "threat_score_threshold": 2,
+    "payload_size_threshold": 10240,
+    "enable_behavioral_analysis": true,
+    "login_failure_threshold": 5,
+    "auto_block_on_brute_force": true,
+    "ip_block_duration": 3600
+  },
+  "whitelist": [
+    "127.0.0.1",
+    "192.168.1.1"
+  ],
+  "threat_intel": {
+    "enabled": false,
+    "api_key": "",
+    "cache_duration": 3600
+  },
+  "alerting": {
+    "enable_email": false,
+    "email_config": {
+      "smtp_server": "",
+      "smtp_port": 587,
+      "username": "",
+      "password": "",
+      "to_addresses": []
+    }
+  }
+}
