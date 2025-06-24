@@ -99,11 +99,6 @@ See our detailed plans in [ROADMAP.md](ROADMAP.md).
 
 ## Usage / *Kullanım*
 
-Run the project to secure your network:  
-*Ağınızı korumak için projeyi çalıştırın:*
-
-```bash
-sudo python src/main.py --mode analyze
 ```
 
 **Steps / *Adımlar***:  
