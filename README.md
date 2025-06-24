@@ -69,10 +69,10 @@ See our detailed plans in [ROADMAP.md](ROADMAP.md).
 
 | Topic / *Başlık*        | Link                                    | Description / *Açıklama*                        |
 |-------------------------|-----------------------------------------|------------------------------------------------|
-| Network Traffic Analysis | [researchs/traffic_analysis.md](researchs/traffic_analysis.md) | In-depth study of packet analysis techniques and tools. / *Paket analiz tekniklerinin ve araçlarının derinlemesine incelenmesi.* |
-| Threat Detection Methods | [researchs/threat_detection.md](researchs/threat_detection.md) | Comprehensive analysis of modern IDS/IPS strategies. / *Modern IDS/IPS stratejilerinin kapsamlı analizi.* |
-| Security Optimization    | [researchs/optimization.md](researchs/optimization.md) | Techniques to minimize false positives in intrusion detection. / *Saldırı tespitinde yanlış pozitifleri azaltma teknikleri.* |
-| Emerging Threats         | [researchs/emerging_threats.md](researchs/emerging_threats.md) | Exploration of new vulnerabilities like Zero-day exploits. / *Zero-day gibi yeni tehditlerin incelenmesi.* |
+| Network Traffic Analysis | [researchs/traffic_analysis.md](ids-ips-project/docs/Network Traffic Analysis.md) | In-depth study of packet analysis techniques and tools. / *Paket analiz tekniklerinin ve araçlarının derinlemesine incelenmesi.* |
+| Threat Detection Methods | [researchs/threat_detection.md](ids-ips-project/docs/Threat Detection Methods.md) | Comprehensive analysis of modern IDS/IPS strategies. / *Modern IDS/IPS stratejilerinin kapsamlı analizi.* |
+| Security Optimization    | [researchs/optimization.md](ids-ips-project/docs/Security Optimization.md) | Techniques to minimize false positives in intrusion detection. / *Saldırı tespitinde yanlış pozitifleri azaltma teknikleri.* |
+| Emerging Threats         | [researchs/emerging_threats.md](ids-ips-project/docs/Emerging Threats.md) | Exploration of new vulnerabilities like Zero-day exploits. / *Zero-day gibi yeni tehditlerin incelenmesi.* |
 
 ---
 
