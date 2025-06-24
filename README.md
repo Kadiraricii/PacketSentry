@@ -97,17 +97,60 @@ See our detailed plans in [ROADMAP.md](ROADMAP.md).
 
 ---
 
-## Usage / *Kullanım*
 
+## Usage / Kullanım
+
+### 1. Traffic Analysis / Trafik Analizi
+To analyze network traffic / Ağ trafiğini analiz etmek için:
+```bash
+sudo python3 src/analyze_traffic.py
 ```
 
-**Steps / *Adımlar***:  
-1. Prepare input data (e.g., capture network traffic using Wireshark and save as `.pcap`).  
-   *Giriş verilerini hazırlayın (örneğin, Wireshark ile ağ trafiğini yakalayın ve `.pcap` olarak kaydedin).*  
-2. Run the script with `--mode analyze` for threat detection or `--mode test` for performance analysis.  
-   *Tehdit tespiti için `--mode analyze`, performans analizi için `--mode test` ile betiği çalıştırın.*  
-3. Review output in `data/ids.log` for detailed logs and `tests/test_results.md` for performance metrics.  
-   *Detaylı logları `data/ids.log`’da, performans metriklerini `tests/test_results.md`’de inceleyin.*
+### 2. Attack Detection / Saldırı Tespiti
+To detect potential attacks / Potansiyel saldırıları tespit etmek için:
+```bash
+sudo python3 src/detect_attacks.py
+```
+
+### 3. Attack Detection and Blocking / Saldırı Tespiti ve Engelleme
+To detect and automatically block attacks / Saldırıları tespit edip otomatik engellemek için:
+```bash
+sudo python3 src/detect_and_block.py
+```
+
+### 4. Easy Network Monitoring / Kolay Ağ İzleme
+For simplified network monitoring / Basitleştirilmiş ağ izleme için:
+```bash
+sudo python3 src/easy_network_monitoring.py
+```
+
+### 5. Performance Testing / Performans Testi
+To test system performance / Sistem performansını test etmek için:
+```bash
+sudo python3 tests/performance_test.py
+```
+
+## Important Notes / Önemli Notlar
+
+- All commands require `sudo` privileges as root access is needed to capture network packets  
+  *Tüm komutlar `sudo` yetkisi gerektirir çünkü ağ paketlerini yakalamak için root erişimi gereklidir*
+
+- Run commands from the project root directory (`PacketSentry/ids-ips-project/`)  
+  *Komutları projenin ana dizininden (`PacketSentry/ids-ips-project/`) çalıştırın*
+
+- Make sure required Python packages are installed before first run  
+  *İlk çalıştırmadan önce gerekli Python paketlerinin yüklendiğinden emin olun*
+
+## Requirements / Gereksinimler
+
+- Python 3.x
+- Root/Administrator privileges / Root/Administrator yetkileri
+- Required Python libraries (specified in requirements.txt) / Gerekli Python kütüphaneleri (requirements.txt dosyasında belirtilmiştir)
+
+## Security Warning / Güvenlik Uyarısı
+
+This tool is developed for network security purposes. Use only on your own network or authorized systems.  
+*Bu araç ağ güvenliği amacıyla geliştirilmiştir. Yalnızca kendi ağınızda veya izinli sistemlerde kullanın.*
 
 <!---
 
